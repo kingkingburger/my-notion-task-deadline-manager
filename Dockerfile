@@ -1,5 +1,4 @@
-# Bun 공식 이미지 사용
-FROM oven/bun:1.0-alpine AS base
+FROM oven/bun:1.1-alpine AS base
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -20,7 +19,7 @@ COPY src/ ./src/
 RUN bun run build
 
 # 프로덕션 스테이지
-FROM oven/bun:1.0-alpine AS production
+FROM oven/bun:1.1-alpine AS production
 
 WORKDIR /app
 
@@ -36,9 +35,6 @@ RUN adduser -S bunuser -u 1001
 # 소유권 변경
 RUN chown -R bunuser:nodejs /app
 USER bunuser
-
-# 포트 노출 (필요시)
-EXPOSE 3000
 
 # 헬스체크 추가
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \

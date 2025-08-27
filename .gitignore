@@ -19,3 +19,5 @@ Thumbs.db
 
 # 임시 파일
 *.tmp
+
+dist/
