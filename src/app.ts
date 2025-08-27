@@ -4,6 +4,8 @@ import { SlackClient } from './slack.js';
 import { 
   filterTasksByDueDate, 
   sortTasksByPriorityAndDueDate, 
+  filterTasksByStatus,
+  excludeCompletedTasks,
   validateEnvironmentVariables,
   log,
   getEnvNumber,
@@ -47,12 +49,16 @@ export class TaskReminderApp {
     try {
       log('작업 알림 처리를 시작합니다...');
 
-      // Notion에서 모든 작업 가져오기
+      // Notion에서 진행중/대기중 작업 가져오기
       const allTasks = await this.notionClient.getTasks();
-      log(`총 ${allTasks.length}개의 작업을 가져왔습니다.`);
+      log(`총 ${allTasks.length}개의 진행중/대기중 작업을 가져왔습니다.`);
+
+      // 완료된 작업 제외 (이중 확인)
+      const activeTasks = excludeCompletedTasks(allTasks);
+      log(`완료 상태 제외 후: ${activeTasks.length}개`);
 
       // 마감일이 임박한 작업들만 필터링
-      const upcomingTasks = filterTasksByDueDate(allTasks, this.reminderDays);
+      const upcomingTasks = filterTasksByDueDate(activeTasks, this.reminderDays);
       log(`마감일이 ${this.reminderDays}일 이내인 작업: ${upcomingTasks.length}개`);
 
       if (upcomingTasks.length === 0) {
@@ -115,12 +121,20 @@ export class TaskReminderApp {
   }
 }
 
-// 애플리케이션 실행
-if (import.meta.main) {
+// 애플리케이션 실행 - Bun과 Node.js 호환
+async function main() {
   const app = new TaskReminderApp();
   app.setupGracefulShutdown();
   app.startScheduler();
 
   // 애플리케이션 계속 실행 유지
   log('작업 알림 서비스가 실행 중입니다... (종료하려면 Ctrl+C)');
+}
+
+// Bun에서 직접 실행되는 경우에만 main 함수 호출
+if (import.meta.main || (process.argv[1] && process.argv[1].endsWith('app.ts'))) {
+  main().catch((error) => {
+    log(`애플리케이션 시작 중 오류 발생: ${error.message}`, 'error');
+    process.exit(1);
+  });
 }

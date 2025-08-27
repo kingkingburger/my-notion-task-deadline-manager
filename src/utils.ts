@@ -17,6 +17,40 @@ export function filterTasksByDueDate(tasks: Task[], days: number = 3): Task[] {
 }
 
 /**
+ * 허용된 상태의 작업들만 필터링합니다 (완료된 작업 제외)
+ */
+export function filterTasksByStatus(tasks: Task[]): Task[] {
+  const allowedStatuses = [
+    'In Progress', '진행중',
+    'Not Started', '대기', '시작 전',
+    'To Do', '할 일',
+    'Pending', '보류'
+  ];
+
+  return tasks.filter(task => {
+    if (!task.status) return true; // 상태가 없으면 포함
+    return allowedStatuses.includes(task.status);
+  });
+}
+
+/**
+ * 완료된 작업들을 제외합니다
+ */
+export function excludeCompletedTasks(tasks: Task[]): Task[] {
+  const completedStatuses = [
+    'Done', '완료', '완성',
+    'Completed', '끝',
+    'Finished', '종료',
+    'Closed', '닫힘'
+  ];
+
+  return tasks.filter(task => {
+    if (!task.status) return true; // 상태가 없으면 포함
+    return !completedStatuses.includes(task.status);
+  });
+}
+
+/**
  * 작업을 마감일 순으로 정렬합니다
  */
 export function sortTasksByDueDate(tasks: Task[]): Task[] {

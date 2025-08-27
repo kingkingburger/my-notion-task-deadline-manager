@@ -8,22 +8,17 @@ export interface Task {
   url: string;
 }
 
-export interface NotionProperty {
-  title?: { plain_text: string }[];
-  rich_text?: { plain_text: string }[];
-  date?: { start: string };
-  select?: { name: string };
-  multi_select?: { name: string }[];
-  people?: { name?: string; id: string }[];
-  number?: number;
-  checkbox?: boolean;
-}
+// Notion API 공식 타입을 재사용
+import type { 
+  PageObjectResponse,
+  PartialPageObjectResponse 
+} from '@notionhq/client/build/src/api-endpoints';
 
-export interface NotionPage {
-  id: string;
-  url: string;
-  properties: Record<string, NotionProperty>;
-}
+// 페이지 타입 별칭
+export type NotionPageResponse = PageObjectResponse;
+
+// 속성 타입 별칭 
+export type NotionPropertyValue = PageObjectResponse['properties'][string];
 
 export interface SlackBlock {
   type: string;
@@ -65,4 +60,10 @@ export interface TaskFilterOptions {
   days: number;
   includeOverdue?: boolean;
   statusFilter?: string[];
+  excludeCompleted?: boolean;
 }
+
+export const TASK_STATUSES = {
+  ACTIVE: ['In Progress', '진행중', 'Not Started', '대기', '시작 전', 'To Do', '할 일', 'Pending', '보류'],
+  COMPLETED: ['Done', '완료', '완성', 'Completed', '끝', 'Finished', '종료', 'Closed', '닫힘']
+} as const;
