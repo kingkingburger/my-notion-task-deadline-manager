@@ -11,7 +11,11 @@
     "dev": "bun --watch src/app.ts",
     "type-check": "tsc --noEmit",
     "lint": "bun run type-check",
-    "test": "bun test",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui",
     "clean": "rm -rf dist",
     "docker:build": "docker build -t notion-slack-reminder .",
     "docker:run": "docker run --env-file .env notion-slack-reminder"
@@ -36,7 +40,11 @@
   "devDependencies": {
     "@types/node": "^20.10.0",
     "@types/node-cron": "^3.0.11",
-    "typescript": "^5.3.0"
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "typescript": "^5.3.0",
+    "vitest": "3.2.4",
+    "msw": "^2.0.0"
   },
   "engines": {
     "bun": ">=1.0.0"

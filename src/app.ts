@@ -1,15 +1,14 @@
 import * as cron from 'node-cron';
-import { NotionClient } from './notion.js';
-import { SlackClient } from './slack.js';
-import { 
-  filterTasksByDueDate, 
-  sortTasksByPriorityAndDueDate, 
-  filterTasksByStatus,
+import {NotionClient} from './notion.js';
+import {SlackClient} from './slack.js';
+import {
   excludeCompletedTasks,
-  validateEnvironmentVariables,
-  log,
+  filterTasksByDueDate,
   getEnvNumber,
-  getEnvString
+  getEnvString,
+  log,
+  sortTasksByPriorityAndDueDate,
+  validateEnvironmentVariables
 } from './utils.js';
 
 export class TaskReminderApp {
