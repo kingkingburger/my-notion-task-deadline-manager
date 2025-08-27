@@ -32,7 +32,8 @@ export interface SlackBlock {
 }
 
 export interface SlackMessage {
-  blocks: SlackBlock[];
+  text?: string;
+  blocks?: SlackBlock[];
 }
 
 export interface EnvironmentConfig {
