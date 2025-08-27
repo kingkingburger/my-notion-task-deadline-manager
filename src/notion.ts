@@ -1,9 +1,6 @@
-import { Client } from '@notionhq/client';
-import type { 
-  PageObjectResponse,
-  PartialPageObjectResponse 
-} from '@notionhq/client/build/src/api-endpoints';
-import type { Task, NotionPageResponse, NotionPropertyValue, PropertyType } from './types/index.js';
+import {Client} from '@notionhq/client';
+import type {PageObjectResponse} from '@notionhq/client/build/src/api-endpoints';
+import type {NotionPropertyValue, PropertyType, Task} from './types/index.js';
 
 export class NotionClient {
   private notion: Client;

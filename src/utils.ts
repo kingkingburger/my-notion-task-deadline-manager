@@ -12,7 +12,7 @@ export function filterTasksByDueDate(tasks: Task[], days: number = 3): Task[] {
     if (!task.dueDate) return false;
 
     const dueDate = new Date(task.dueDate);
-    return dueDate >= today && dueDate <= futureDate;
+    return dueDate <= futureDate;
   });
 }
 
