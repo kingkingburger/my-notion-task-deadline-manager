@@ -131,8 +131,8 @@ async function main() {
   log('작업 알림 서비스가 실행 중입니다... (종료하려면 Ctrl+C)');
 }
 
-// Bun에서 직접 실행되는 경우에만 main 함수 호출
-if (import.meta.main || (process.argv[1] && process.argv[1].endsWith('app.ts'))) {
+// 타입 단언을 사용한 간단한 해결책
+if ((import.meta as any).main) {
   main().catch((error) => {
     log(`애플리케이션 시작 중 오류 발생: ${error.message}`, 'error');
     process.exit(1);
