@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {TaskReminderApp} from "../src/app.ts";
-import {mockTasks} from "./mocks/notion.mock.ts";
+import { TaskReminderApp } from "../src/app.ts";
+import { mockTasks } from "./mocks/notion.mock";
+
 
 // 의존성 모킹
 vi.mock('../src/notion.ts', () => ({
@@ -36,9 +37,16 @@ describe('TaskReminderApp', () => {
   let mockNotionClient: any;
   let mockSlackClient: any;
   const originalEnv = process.env;
+  let mockExit: any;
 
   beforeEach(async () => {
     vi.clearAllMocks();
+
+    // process.exit 모킹
+    mockExit = vi.spyOn(process, 'exit').mockImplementation((() => {
+      throw new Error('process.exit called');
+    }) as any);
+
 
     // 환경변수 복원
     process.env = { ...originalEnv };
@@ -65,44 +73,25 @@ describe('TaskReminderApp', () => {
   });
 
   describe('constructor', () => {
-    it('필수 환경변수가 없으면 프로세스를 종료해야 합니다', async () => {
+    it('필수 환경변수가 없으면 에러를 던져야 합니다', async () => {
+      vi.resetModules();
       const { validateEnvironmentVariables } = await import('../src/utils.ts');
       const error = new Error('다음 환경변수가 설정되지 않았습니다: NOTION_API_KEY');
-
-      // process.exit를 모킹
-      const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
-        throw new Error('Process exit prevented in test');
-      });
-
-      // console.log 스파이 (로그 확인용)
-      const logSpy = vi.spyOn(console, 'log');
 
       vi.mocked(validateEnvironmentVariables).mockImplementation(() => {
         throw error;
       });
 
-      expect(() => new TaskReminderApp()).toThrow('Process exit prevented in test');
-
-      // process.exit가 올바른 코드로 호출되었는지 확인
-      expect(exitSpy).toHaveBeenCalledWith(1);
-
-      // spy들 복원
-      exitSpy.mockRestore();
-      logSpy.mockRestore();
+      expect(() => new TaskReminderApp()).toThrow('process.exit called');
+      expect(mockExit).toHaveBeenCalledWith(1);
     });
 
     it('환경변수가 모두 있으면 성공적으로 초기화되어야 합니다', async () => {
       const { validateEnvironmentVariables } = await import('../src/utils.ts');
       vi.mocked(validateEnvironmentVariables).mockImplementation(() => {});
 
-      // process.exit가 호출되지 않아야 함
-      const exitSpy = vi.spyOn(process, 'exit');
-
       const taskApp = new TaskReminderApp();
       expect(taskApp).toBeInstanceOf(TaskReminderApp);
-
-      // process.exit가 호출되지 않았는지 확인
-      expect(exitSpy).not.toHaveBeenCalled();
 
       // 모킹된 인스턴스에 접근
       const { NotionClient } = await import('../src/notion.ts');
@@ -111,9 +100,6 @@ describe('TaskReminderApp', () => {
       app = taskApp;
       mockNotionClient = vi.mocked(NotionClient).mock.results[0].value;
       mockSlackClient = vi.mocked(SlackClient).mock.results[0].value;
-
-      // spy 복원
-      exitSpy.mockRestore();
     });
   });
 
