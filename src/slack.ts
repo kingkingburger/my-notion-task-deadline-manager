@@ -107,7 +107,7 @@ export class SlackClient {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `${urgencyEmoji} *${task.title}*\n${priorityEmoji} 우선순위: ${task.priority || '없음'}\n📅 마감일: ${this.formatDate(task.dueDate)} (${daysLeft}일 남음)\n👤 담당자: ${task.assignee?.join(', ') || '없음'}`
+          text: `${urgencyEmoji} *${task.title}*\n 📅 마감일: ${this.formatDate(task.dueDate)} (${daysLeft}일 남음)'}`
         },
         accessory: {
           type: 'button',
