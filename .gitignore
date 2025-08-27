@@ -1,0 +1,21 @@
+# 의존성
+node_modules/
+
+# 환경변수
+.env
+
+# 로그 파일
+*.log
+logs/
+
+# IDE 파일
+.vscode/
+*.swp
+*.swo
+
+# OS 생성 파일
+.DS_Store
+Thumbs.db
+
+# 임시 파일
+*.tmp

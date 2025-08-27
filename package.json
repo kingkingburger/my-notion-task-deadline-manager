@@ -1,0 +1,44 @@
+{
+  "name": "notion-slack-task-reminder",
+  "version": "1.0.0",
+  "description": "Notion API를 사용해서 마감일이 3일 이내인 작업들을 2시간마다 Slack으로 알림을 보내는 서비스 (TypeScript + Bun + ESM)",
+  "type": "module",
+  "main": "dist/app.js",
+  "module": "src/app.ts",
+  "scripts": {
+    "build": "bun build src/app.ts --outdir dist --target node",
+    "start": "bun run dist/app.js",
+    "dev": "bun --watch src/app.ts",
+    "type-check": "tsc --noEmit",
+    "lint": "bun run type-check",
+    "test": "bun test",
+    "clean": "rm -rf dist",
+    "docker:build": "docker build -t notion-slack-reminder .",
+    "docker:run": "docker run --env-file .env notion-slack-reminder"
+  },
+  "keywords": [
+    "notion",
+    "slack",
+    "reminder",
+    "task",
+    "notification",
+    "typescript",
+    "bun",
+    "esm"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@notionhq/client": "^2.2.15",
+    "axios": "^1.6.0",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/node-cron": "^3.0.11",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  }
+}

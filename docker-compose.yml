@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  notion-slack-reminder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: notion-slack-reminder
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./logs:/app/logs:rw
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "bun run"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      - "com.docker.compose.project=notion-slack-reminder"
+      - "maintainer=your-email@example.com"
+
+  # 선택사항: 로그 수집을 위한 서비스
+  log-collector:
+    image: fluent/fluentd:v1.16-1
+    container_name: fluentd
+    restart: unless-stopped
+    volumes:
+      - ./fluentd:/fluentd/etc:ro
+      - ./logs:/var/log/app:ro
+    depends_on:
+      - notion-slack-reminder
+    profiles:
+      - logging
+
+networks:
+  default:
+    name: notion-reminder-network
+    driver: bridge
