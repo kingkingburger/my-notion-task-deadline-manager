@@ -67,7 +67,6 @@ describe('통합 테스트', () => {
       };
 
       mockQuery.mockResolvedValue(tasksWithUpcomingDueDate);
-      mockedAxios.post.mockResolvedValue({ status: 200 });
 
       const app = new TaskReminderApp();
       await app.processTaskReminders();
@@ -138,7 +137,6 @@ describe('통합 테스트', () => {
     it('오류 발생 시 오류 알림을 Slack으로 보내야 합니다', async () => {
       const error = new Error('Notion API 연결 실패');
       mockQuery.mockRejectedValue(error);
-      mockedAxios.post.mockResolvedValue({ status: 200 });
 
       const app = new TaskReminderApp();
       await app.processTaskReminders();
@@ -165,7 +163,6 @@ describe('통합 테스트', () => {
       const slackClient = new SlackClient('https://hooks.slack.com/test');
 
       mockQuery.mockResolvedValue(mockNotionResponse);
-      mockedAxios.post.mockResolvedValue({ status: 200 });
 
       const tasks = await notionClient.getTasks();
       await slackClient.sendTaskReminder(tasks);
@@ -177,7 +174,8 @@ describe('통합 테스트', () => {
         priority: '높음'
       });
 
-      const slackMessage = mockedAxios.post.mock.calls[0][1];
+      const mockAxiosResult = mockedAxios.post;
+      const slackMessage = (mockAxiosResult as any).mock.calls[0][1];
       expect(slackMessage.blocks).toBeDefined();
 
       const taskSection = slackMessage.blocks.find((block: any) => 
@@ -215,7 +213,6 @@ describe('통합 테스트', () => {
       };
 
       mockQuery.mockResolvedValue(tasksWithFiveDaysDueDate);
-      mockedAxios.post.mockResolvedValue({ status: 200 });
 
       const app = new TaskReminderApp();
       await app.processTaskReminders();
