@@ -124,10 +124,20 @@ export class TaskReminderApp {
 async function main() {
   const app = new TaskReminderApp();
   app.setupGracefulShutdown();
-  app.startScheduler();
 
-  // 애플리케이션 계속 실행 유지
-  log('작업 알림 서비스가 실행 중입니다... (종료하려면 Ctrl+C)');
+  // GitHub Action 환경에서는 한 번만 실행하고 종료
+  const isGithubAction = process.env.GITHUB_ACTIONS === 'true' || process.env.RUN_ONCE === 'true';
+
+  if (isGithubAction) {
+    log('GitHub Action 환경에서 한 번만 실행합니다.');
+    await app.processTaskReminders();
+    log('작업 완료. 프로세스를 종료합니다.');
+    process.exit(0);
+  } else {
+    app.startScheduler();
+    // 애플리케이션 계속 실행 유지
+    log('작업 알림 서비스가 실행 중입니다... (종료하려면 Ctrl+C)');
+  }
 }
 
 // 타입 단언을 사용한 간단한 해결책
