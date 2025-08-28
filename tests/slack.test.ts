@@ -18,6 +18,7 @@ describe('SlackClient', () => {
 
   describe('sendTaskReminder', () => {
     it('작업 알림 메시지를 성공적으로 전송해야 합니다', async () => {
+      (mockedAxios.post as any).mockResolvedValue({ status: 200 });
 
       const activeTasks = mockTasks.filter(task => task.status !== '완료');
       await slackClient.sendTaskReminder(activeTasks);
@@ -45,11 +46,13 @@ describe('SlackClient', () => {
 
     it('Slack 전송 오류를 적절히 처리해야 합니다', async () => {
       const error = new Error('Slack 전송 실패');
+      (mockedAxios.post as any).mockRejectedValue(error);
 
       await expect(slackClient.sendTaskReminder(mockTasks)).rejects.toThrow('Slack 전송 실패');
     });
 
     it('작업 메시지 형식이 올바른지 확인해야 합니다', async () => {
+      (mockedAxios.post as any).mockResolvedValue({ status: 200 });
 
       const testTask = {
         ...mockTasks[0],
@@ -78,6 +81,8 @@ describe('SlackClient', () => {
 
   describe('sendErrorNotification', () => {
     it('오류 알림을 성공적으로 전송해야 합니다', async () => {
+      (mockedAxios.post as any).mockResolvedValue({ status: 200 });
+
       const error = new Error('테스트 오류');
       await slackClient.sendErrorNotification(error);
 
@@ -97,6 +102,8 @@ describe('SlackClient', () => {
     });
 
     it('Slack 오류 알림 전송 실패를 처리해야 합니다', async () => {
+      (mockedAxios.post as any).mockRejectedValue(new Error('Slack 전송 실패'));
+
       const error = new Error('테스트 오류');
 
       // 오류가 던져지지 않아야 함 (내부에서 catch됨)
