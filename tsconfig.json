@@ -20,7 +20,6 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["bun-types"],
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": [
