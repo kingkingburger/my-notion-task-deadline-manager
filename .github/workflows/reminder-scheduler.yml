@@ -31,7 +31,7 @@ jobs:
         run: bun run type-check
 
       - name: Run tests
-        run: bun test
+        run: bun run test
 
   run-reminder:
     name: Run Notion Slack Reminder
